@@ -1,0 +1,40 @@
+{
+  "expo": {
+    "name": "なわばり",
+    "slug": "territory-mobile",
+    "scheme": "territory",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "ios": {
+      "bundleIdentifier": "com.myapp.territory"
+    },
+    "android": {
+      "package": "com.myapp.territory"
+    },
+    "plugins": [
+      "expo-router",
+      "expo-secure-store",
+      [
+        "react-native-nfc-manager",
+        {
+          "nfcPermission": "場所への参加・退出のためNFCタグを読み取ります。"
+        }
+      ],
+      [
+        "expo-location",
+        {
+          "locationWhenInUsePermission": "場所への参加とスキャンへの応答に位置情報を使用します。",
+          "locationAlwaysAndWhenInUsePermission": "場所の範囲外に出たとき公開を終了するため位置情報を使用します。",
+          "isIosBackgroundLocationEnabled": true,
+          "isAndroidBackgroundLocationEnabled": true,
+          "isAndroidForegroundServiceEnabled": true
+        }
+      ]
+    ],
+    "web": {
+      "bundler": "metro"
+    },
+    "newArchEnabled": false
+  }
+}

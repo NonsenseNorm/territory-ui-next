@@ -1,8 +1,12 @@
 node_modules/
-.next/
-out/
-.env*
-*.tsbuildinfo
+mobile/node_modules/
+mobile/.expo/
+mobile/android/
+mobile/ios/
+mobile/dist/
+**/.env*
+**/*.tsbuildinfo
 test-results/
 playwright-report/
 *.log
+

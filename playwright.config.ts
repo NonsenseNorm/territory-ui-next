@@ -1,8 +1,7 @@
-import { defineConfig, devices } from '@playwright/test';
+import { defineConfig,devices } from '@playwright/test';
 export default defineConfig({
-  testDir: './tests', fullyParallel: true,
-  use: { baseURL: 'http://127.0.0.1:3100', trace: 'retain-on-failure' },
-  projects: [{ name: 'mobile-chromium', use: { ...devices['Pixel 7'], browserName: 'chromium', channel: process.env.PLAYWRIGHT_CHANNEL || undefined } }],
-  webServer: { command: 'npx next start --hostname 127.0.0.1 --port 3100', url: 'http://127.0.0.1:3100', reuseExistingServer: !process.env.CI },
+  testDir:'./tests',timeout:60000,fullyParallel:true,
+  use:{baseURL:'http://127.0.0.1:3110',trace:'retain-on-failure'},
+  projects:[{name:'mobile-chromium',use:{...devices['Pixel 7'],channel:process.env.PLAYWRIGHT_CHANNEL||undefined}}],
+  webServer:{command:'node design/serve.cjs',url:'http://127.0.0.1:3110',reuseExistingServer:!process.env.CI},
 });
-

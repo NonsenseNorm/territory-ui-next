@@ -1,82 +1,106 @@
-# なわばり — Next.js UIプロトタイプ
+# なわばり — 本番React Native UI + 接続モック
 
-React Native / Expo版「なわばり」のUIを、デザイナーへの引き渡し用にNext.jsで再現した独立プロジェクトです。
+**これはUIを別実装したNext.jsアプリではありません。** 元のReact Native / Expoアプリの画面・ルーティング・認証ガード・状態管理をそのまま、React Native Webで動かすデザイン用の作業コピーです。
+
+このリポジトリ名には以前の `territory-ui-next` が残っていますが、現在の実装はExpo / React Nativeです。旧Next.js版はGit履歴にあります。
 
 ## 起動
 
-Node.js 20.9以上を用意してください（検証環境: Node.js 24）。
+Node.js 20.19以上（検証: 24）を用意し、このリポジトリ直下で実行します。
 
 ```sh
 npm ci
-npm run dev
-```
-
-[画面一覧](http://localhost:3000/preview) を最初に開いてください。アプリのホームは [http://localhost:3000](http://localhost:3000) です。
-
-環境変数、Supabaseアカウント、Android SDK、USB端末は不要です。React Native側と依存関係・設定ファイルを共有しません。
-
-## デザイナー向け
-
-- 元アプリのSVG 4枚をそのまま使用。サイズ・文字・余白・色・ボタンの有効/無効状態を移植しています。
-- PCでは幅420px、スマートフォンでは画面幅に合わせて表示します。ブラウザーの端末モードで360pxや390pxに変更して確認できます。
-- OSのステータスバー・ソフトウェアキーボード・ネイティブのNFCダイアログは含みません。フォントの字形や標準スイッチの細部はブラウザーとAndroidで異なります。
-- `/preview` は引き渡し用の画面・状態一覧です。アプリのUIには追加のデザイン確認用コントロールを重ねていません。
-- `?state=` で開いた読み込み・完了・応答待ちなどの状態は固定表示です。連続した操作は `/` から確認してください。
-- 全画面に直接アクセスできます。デザイン確認のため認証ガードはありません。
-
-## 画面
-
-| URL | 画面 |
-|---|---|
-| `/` | NFC待機・参加・退出・ゴースト切替 |
-| `/login` | ログイン |
-| `/register` | 新規登録・メール確認案内 |
-| `/scan` | スキャン・応答待ち・結果 |
-| `/account` | アカウント |
-| `/logout` | ログアウト確認 |
-| `/delete-account` | アカウント削除確認 |
-| `/preview` | 全画面・24状態へのリンク |
-
-状態別URLの例: `/?state=online`、`/?state=ghost`、`/login?state=error`、`/scan?state=results`、`/scan?state=empty`。
-
-## デモの動き
-
-1. ホームのアンテナを押すと、読み込み → 完了 → オンラインに切り替わります。もう一度押すと退出します。
-2. オンライン中はゴーストモードとスキャンが操作できます。
-3. スキャンは2秒後に架空の2件の結果を表示し、30秒で受付終了になります。
-4. ログインは架空のメールアドレスと任意のパスワードで動作します。新規登録は8文字以上を入力するとメール確認案内を表示します。
-5. 削除確認は「削除」を入力したときだけ進めます。
-
-**UIのみのデモです。** 実際のアカウント作成・認証・メール送信・NFC読取・GPS取得・ログアウトAPI・削除APIは呼び出しません。結果の場所・ユーザー・座標・時刻は架空の固定値です。入力に本物のパスワードを使わないでください。入力したパスワードは送信・保存されず、画面内の一時状態だけで扱います。デモの状態は再読み込みでリセットされます。
-
-## 編集箇所
-
-| ファイル | 内容 / 元のReact Native実装 |
-|---|---|
-| `app/globals.css` | 色・角丸・余白・タイポグラフィ。冒頭のCSS変数で共通値を変更 |
-| `components/ui.tsx` | 共通ボタンと画面ヘッダー / `mobile/components/ui.tsx`、`mobile/app/_layout.tsx` |
-| `components/connection-screen.tsx` | ホーム・アンテナ / `mobile/app/index.tsx`、`ConnectionScreen.tsx` |
-| `components/auth-form.tsx` | ログイン・新規登録 / `AuthForm.tsx` |
-| `components/scan-screen.tsx` | スキャン / `mobile/app/scan.tsx` |
-| `components/account-screen.tsx` | アカウント / `mobile/app/account.tsx` |
-| `components/end-account.tsx` | ログアウト・削除 / `EndAccount.tsx` |
-| `components/demo-provider.tsx` | ブラウザー内だけのデモ状態 |
-| `lib/demo.ts` | 架空の表示データ |
-| `public/*.svg` | 元アプリから変更せずコピーした4枚のSVG |
-
-## 確認・ビルド
-
-```sh
-npm run build
-npm run typecheck
-npx playwright install chromium
-npm run test:ui
 npm start
 ```
 
-Playwrightはビルド済みアプリを3100番で起動して、画面遷移、参加・退出、ゴースト、スキャン、認証フォーム、削除確認、全状態の幅320px表示を検証します。通常の開発・プレビューは3000番です。
+`npm ci` は `mobile/` の依存もインストールします。
 
-既存Chromeを使う場合、PowerShellで `$env:PLAYWRIGHT_CHANNEL='chrome'` を指定するとブラウザーの追加インストールを省略できます。
+- アプリ: http://localhost:3010/
+- 画面・フロー一覧: http://localhost:3010/preview
 
-GitHubにはこのディレクトリの内容だけをアップロードします。React Native、Supabase、APK、環境ファイルは含みません。
+初回は本番と同じ認証ガードによりログイン画面になります。環境ファイル・Supabaseログイン・Android端末は不要です。
 
+## 何をそのまま使っているか
+
+| 対象 | 使い方 |
+|---|---|
+| `mobile/app/` の元の7画面と `_layout.tsx` | 元のコードを変更せず使用。Expo Routerのpush/replace/back、Redirect、確認フォームも同じ |
+| `mobile/components/` | 元のボタン・アンテナ・認証フォーム・削除確認をそのまま描画 |
+| `mobile/lib/provider.tsx` | 元のセッション管理、5秒周期の同期、画面復帰処理、期限判定を実行 |
+| `mobile/lib/location.ts` | 元の位置判定、参加リース、範囲外退出、通信失敗時の再送処理を実行 |
+| `mobile/lib/geometry.ts` / `types.ts` | 元の判定処理と型定義 |
+| `public/*.svg` | 元アプリの4枚を変更せず使用 |
+
+元ファイル22件のSHA-256を `design/source-manifest.json` に記録しています。作成時にすべて元ソースと一致することを確認しました。画面のReact NativeコンポーネントをHTML/CSSへ書き直していません。
+
+## モックにした境界
+
+`mobile/metro.config.js` がデザイン実行時に次の接続先だけを差し替えます。画面内のimportやイベントハンドラーは変更していません。
+
+| 本番の境界 | デザイン用実装 |
+|---|---|
+| `lib/supabase.ts` | `design/supabase.ts` — AuthメソッドとREST APIの契約に合わせたローカル応答 |
+| `lib/nfc.ts` | `design/nfc.ts` — NFC成功・キャンセル・失敗 |
+| `expo-location` | `design/expo-location.ts` — GPS権限と位置情報 |
+| `expo-task-manager` | `design/expo-task-manager.ts` — ネイティブ背景タスク登録のスタブ |
+| `lib/location.ts` の背景取得開始・停止 | `design/location.ts` — OS依存部分のみスタブ。位置同期本体は元ファイルを再利用 |
+| AsyncStorage | `design/storage.ts` — このデモ専用の保存領域 |
+
+`design/` は上表では `mobile/design/` を表します。元の本番接続ファイルも比較・引き戻し用に残していますが、デザインバンドルには解決されません。起動スクリプトは環境ファイルの読み込みを無効化し、Metroはモックモード以外では起動を拒否します。
+
+## 通して確認する
+
+1. 未登録状態から「新規登録へ」を押し、架空のメールアドレス・8文字以上の架空パスワードで登録。
+2. 確認メール案内が表示されます。確認前のログインは失敗します。
+3. 右上の「デザイン操作」で「確認メールを開いたことにする」を押します。
+4. 登録した値でログイン。ホームからアンテナを押して参加。
+5. ゴーストの切替、街のスキャン、ヘッダーやブラウザーでの戻る操作、再タッチ退出を確認。
+6. アカウントからログアウトや削除の確認画面へ進み、キャンセル／実行を確認。
+
+手早く始めるには「デザイン操作 → サンプルで開始」、または画面・フロー一覧を使ってください。サンプルのログイン情報は `designer@example.test` / `preview123` です（サンプル開始状態を選ぶと作成されます）。
+
+**画面一覧はスクリーンショット集ではありません。** そのフローの開始データをセットして実際のルートを開き、以後は同じセッション・同じナビゲーション履歴で操作します。
+
+## エラーと環境変化
+
+「デザイン操作」は製品画面の外にある専用パネルです。
+
+- 通信オフライン、GPS拒否、範囲外への移動
+- NFC読取のキャンセル／失敗
+- 背景位置情報の権限拒否
+- 遅い応答（2秒・5秒）による処理中・操作不可状態
+- スキャン応答あり／なし（本番と同じ30秒の受付）
+- 次の登録・ログイン・参加／退出・ゴースト・スキャン・ログアウト・削除だけを一度失敗させる
+
+パネルを閉じた後、通常の画面操作で結果を確認してください。範囲外への移動は、本番の位置同期が走る数秒後に退出へ反映されます。通信障害後の再送も元のコードが処理します。
+
+## デザイナーの編集と本番への反映
+
+1. **`mobile/app/` と `mobile/components/` を編集します。** React NativeのView/Text/StyleSheetとExpo Routerを使います。
+2. `npm start` 中は変更がブラウザーへ反映されます。
+3. 本番への引き戻しは編集した既存画面・共通コンポーネントの差分をレビューして移植します。ディレクトリ構成・コンポーネント名・propsは元と同じです。
+4. `mobile/design/`、`mobile/app/preview.tsx`、`mobile/design-entry.ts`、デザイン用Metro設定、ルートの実行スクリプトは本番へコピーしません。本番のpackage.json・接続設定は維持してください。
+
+ブラウザー表示のため `#root` を最大幅420pxにしています。画面の本体は元のレイアウトです。OSのステータスバー、キーボード、ネイティブNFCダイアログ、OSの背景動作までは再現しません。
+
+## 保存・実サービスとの違い
+
+実際の登録・メール送信・GPS・NFC・Supabaseへの通信・データ削除は行いません。操作状態はブラウザーのこのタブのsessionStorageに保存し、再読み込みしても引き継ぎます。「初回状態に戻す」でこのデモの状態だけを消せます。架空の入力だけを使ってください。パスワードは平文保存せずデモ用ハッシュで照合します。
+
+モックは画面フローを検証するためのものです。SupabaseのRLS、複数端末間のリアルタイムな位置応答、サーバー側の厳密な認可、実機の権限やバックグラウンド制約を検証するものではありません。
+
+## 検証
+
+```sh
+npm run typecheck
+npm test
+npm run build
+npx playwright install chromium
+npm run test:ui
+```
+
+既存Chromeを使う場合は、PowerShellで `$env:PLAYWRIGHT_CHANNEL='chrome'` を設定すればブラウザーの追加インストールは不要です。
+
+ブラウザーテストはWeb出力を3110番で配信して、登録→確認前のログイン拒否→メール確認→ログイン→再読み込み→ログアウト、参加失敗→再送→ゴースト→スキャン→戻る→範囲外退出、削除確認→失敗→再試行→認証拒否を検証します。
+
+元アプリの依存バージョンを維持しています。`npm audit`には元の依存ツリーに由来する24件（moderate 15 / high 9）が報告されるため、本番の依存更新・配布判断は元アプリ側で別途行ってください。
